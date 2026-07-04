@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clean CRM Data for SaaS Sales Teams — Free Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #14171C;
+    --ink-2: #1B1F26;
+    --line: #2A2E35;
+    --paper: #E8E6E1;
+    --paper-dim: #A8A5A0;
+    --flag: #FFC94A;
+    --flag-dim: #7A5F1F;
+    --clean: #6FCF97;
+    --clean-dim: #2E4A3B;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .display {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .mono {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* NAV */
+  nav {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .logo span { color: var(--flag); }
+  nav .cta-small {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 8px 16px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  nav .cta-small:hover { border-color: var(--flag); background: rgba(255,201,74,0.06); }
+
+  /* HERO */
+  .hero {
+    padding: 96px 0 80px;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--flag);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--flag);
+    border-radius: 50%;
+    display: inline-block;
+  }
+  h1 {
+    font-size: 48px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    margin-bottom: 24px;
+  }
+  h1 .strike {
+    position: relative;
+    color: var(--paper-dim);
+  }
+  h1 .strike::after {
+    content: '';
+    position: absolute;
+    left: -2px; right: -2px;
+    top: 52%;
+    height: 2px;
+    background: #E85D5D;
+    transform: rotate(-2deg);
+  }
+  .hero p.lead {
+    font-size: 17px;
+    color: var(--paper-dim);
+    max-width: 460px;
+    margin-bottom: 36px;
+  }
+  .cta-row { display: flex; gap: 16px; align-items: center; }
+  .btn-primary {
+    background: var(--paper);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 14px 26px;
+    border-radius: 6px;
+    display: inline-block;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn-primary:hover { background: var(--flag); transform: translateY(-1px); }
+  .no-pitch {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--paper-dim);
+  }
+
+  /* SIGNATURE TABLE ELEMENT */
+  .table-card {
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    position: relative;
+  }
+  .table-card .cardhead {
+    display: flex;
+    justify-content: space-between;
+    color: var(--paper-dim);
+    margin-bottom: 14px;
+    font-size: 12px;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1.3fr 1.3fr 0.8fr;
+    gap: 10px;
+    padding: 10px 8px;
+    border-radius: 5px;
+    margin-bottom: 6px;
+    transition: all 0.4s ease;
+  }
+  .row.dupe {
+    background: rgba(255,201,74,0.08);
+    border: 1px solid var(--flag-dim);
+  }
+  .row.dupe .field { color: var(--flag); }
+  .row.clean {
+    background: rgba(111,207,151,0.08);
+    border: 1px solid var(--clean-dim);
+  }
+  .row.clean .field { color: var(--clean); }
+  .row.head {
+    color: var(--paper-dim);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 4px 8px 10px;
+  }
+  .strikeout { text-decoration: line-through; opacity: 0.5; }
+  .toggle-wrap {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+  }
+  .toggle-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--paper);
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+  .toggle-btn:hover { border-color: var(--paper); }
+
+  /* PAIN POINTS */
+  .section { padding: 72px 0; border-top: 1px solid var(--line); }
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--paper-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .section h2 {
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 40px;
+    max-width: 560px;
+  }
+  .grid3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .pain-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 24px;
+    background: var(--ink-2);
+  }
+  .pain-card .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--flag);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .pain-card h3 {
+    font-size: 17px;
+    margin-bottom: 8px;
+  }
+  .pain-card p {
+    font-size: 14px;
+    color: var(--paper-dim);
+  }
+
+  /* PROCESS */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    counter-reset: step;
+  }
+  .step {
+    padding: 0 20px 0 0;
+    border-right: 1px solid var(--line);
+    position: relative;
+  }
+  .step:last-child { border-right: none; padding-right: 0; }
+  .step:first-child { padding-left: 0; }
+  .step { padding-left: 20px; }
+  .step .num {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--flag);
+    font-size: 13px;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .step h3 { font-size: 15px; margin-bottom: 6px; }
+  .step p { font-size: 13px; color: var(--paper-dim); }
+
+  /* FINAL CTA */
+  .final-cta {
+    text-align: center;
+    padding: 90px 0;
+  }
+  .final-cta h2 {
+    font-size: 34px;
+    max-width: 620px;
+    margin: 0 auto 16px;
+  }
+  .final-cta p {
+    color: var(--paper-dim);
+    margin-bottom: 32px;
+  }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 28px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--paper-dim);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; padding-top: 56px; }
+    h1 { font-size: 34px; }
+    .grid3 { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; row-gap: 28px; }
+    .step { border-right: none; padding-left: 0; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">clean<span>row</span></div>
+    <a href="#contact" class="cta-small">Book free audit →</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap" style="display:contents;">
+    <div>
+      <div class="eyebrow">Free 20-minute CRM audit</div>
+      <h1>Your CRM has<br><span class="strike">3,412 contacts.</span><br>Maybe 2,100 are real.</h1>
+      <p class="lead">I fix duplicate records, broken imports, and inconsistent fields in HubSpot and Salesforce — so your sales team stops working off bad data.</p>
+      <div class="cta-row">
+        <a href="#contact" class="btn-primary">Get your free audit</a>
+        <span class="no-pitch">no pitch · 20 minutes · your data stays yours</span>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="cardhead">
+        <span>crm_contacts.csv</span>
+        <span id="rowcount">6 rows</span>
+      </div>
+      <div class="row head"><span>Name</span><span>Company</span><span>Status</span></div>
+      <div id="tableBody"></div>
+      <div class="toggle-wrap">
+        <button class="toggle-btn" onclick="toggleClean()">Show cleaned version</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-label">Where it comes from</div>
+    <h2>The three ways CRM data quietly breaks</h2>
+    <div class="grid3">
+      <div class="pain-card">
+        <span class="tag">01 — Duplicates</span>
+        <h3>Same lead, three records</h3>
+        <p>Form fills, list imports, and manual entry all create the same contact more than once — inflating your pipeline count and confusing whoever calls them next.</p>
+      </div>
+      <div class="pain-card">
+        <span class="tag">02 — Broken imports</span>
+        <h3>Fields that didn't map right</h3>
+        <p>A CSV import from three years ago put phone numbers in the notes field. Nobody noticed until a report came back wrong.</p>
+      </div>
+      <div class="pain-card">
+        <span class="tag">03 — Inconsistent formatting</span>
+        <h3>"CA", "Calif.", and "California"</h3>
+        <p>Every rep enters data their own way. Segmentation, routing, and reporting all quietly break when the same field means five different things.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-label">How the audit works</div>
+    <h2>20 minutes, no obligation</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="num">01</span>
+        <h3>You share access</h3>
+        <p>Read-only view of your HubSpot or Salesforce — nothing is changed.</p>
+      </div>
+      <div class="step">
+        <span class="num">02</span>
+        <h3>I run the audit</h3>
+        <p>Duplicate scan, field consistency check, import artifact review.</p>
+      </div>
+      <div class="step">
+        <span class="num">03</span>
+        <h3>You get the findings</h3>
+        <p>A plain-language summary of what's broken and what it's costing you.</p>
+      </div>
+      <div class="step">
+        <span class="num">04</span>
+        <h3>No pitch</h3>
+        <p>If you want help fixing it, we talk. If not, keep the findings anyway.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta" id="contact">
+  <div class="wrap">
+    <h2>Find out what's actually in your CRM.</h2>
+    <p>Free, no-pressure, 20 minutes — most teams find something worth fixing.</p>
+    <a href="mailto:georgetabatadzee@gmail.com?subject=Free CRM Audit Request" class="btn-primary">Email me to book yours</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:contents;">
+    <span>cleanrow — CRM data audits for SaaS teams</span>
+    <span>georgetabatadzee@gmail.com</span>
+  </div>
+</footer>
+
+<script>
+  const dirtyRows = [
+    { name: 'J. Martinez', company: 'Acme Inc', status: 'dupe' },
+    { name: 'Jon Martinez', company: 'Acme Inc.', status: 'dupe' },
+    { name: 'S. Patel', company: 'Nova Corp', status: 'ok' },
+    { name: 'sarah patel', company: 'NOVA CORP', status: 'dupe' },
+    { name: 'T. Nguyen', company: '(blank)', status: 'ok' },
+    { name: 'R. Foster', company: 'Bright Labs', status: 'ok' },
+  ];
+
+  const cleanRows = [
+    { name: 'Jon Martinez', company: 'Acme Inc.', status: 'clean' },
+    { name: 'Sarah Patel', company: 'Nova Corp', status: 'clean' },
+    { name: 'T. Nguyen', company: 'Unknown', status: 'clean' },
+    { name: 'R. Foster', company: 'Bright Labs', status: 'clean' },
+  ];
+
+  let isClean = false;
+
+  function renderDirty() {
+    const body = document.getElementById('tableBody');
+    body.innerHTML = dirtyRows.map(r => `
+      <div class="row ${r.status === 'dupe' ? 'dupe' : ''}">
+        <span class="field">${r.name}</span>
+        <span class="field">${r.company}</span>
+        <span class="field">${r.status === 'dupe' ? 'duplicate' : 'ok'}</span>
+      </div>
+    `).join('');
+    document.getElementById('rowcount').textContent = dirtyRows.length + ' rows';
+  }
+
+  function renderClean() {
+    const body = document.getElementById('tableBody');
+    body.innerHTML = cleanRows.map(r => `
+      <div class="row clean">
+        <span class="field">${r.name}</span>
+        <span class="field">${r.company}</span>
+        <span class="field">merged</span>
+      </div>
+    `).join('');
+    document.getElementById('rowcount').textContent = cleanRows.length + ' rows';
+  }
+
+  function toggleClean() {
+    isClean = !isClean;
+    isClean ? renderClean() : renderDirty();
+    document.querySelector('.toggle-btn').textContent = isClean ? 'Show original mess' : 'Show cleaned version';
+  }
+
+  renderDirty();
+</script>
+
+</body>
+</html>
